@@ -5,7 +5,7 @@ window.WineView = Backbone.View.extend({
     },
 
     render: function () {
-        $(this.el).html(this.template(this.model.attr));
+        $(this.el).html(this.template(this.model.toJSON()));
         return this;
     },
 
@@ -22,7 +22,9 @@ window.WineView = Backbone.View.extend({
 
         // Apply the change to the model
         var target = event.target;
-        this.model.set(target.name, target.value);
+        var change = {};
+        change[target.name] = target.value;
+        this.model.set(change);
 
         // Run validation rule (if any) on changed item
         var check = this.model.validateItem(target.id);
