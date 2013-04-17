@@ -1,42 +1,62 @@
 var AppRouter = Backbone.Router.extend({
 
     routes: {
-        ""                  : "list",
-        "wines/page/:page"	: "list",
-        "wines/add"         : "addWine",
-        "wines/:id"         : "wineDetails",
-        "about"             : "about"
+        "": "list",
+        "wines/page/:page": "list",
+        "wines/add": "addWine",
+        "wines/:id": "wineDetails",
+        "about": "about"
     },
 
-    initialize: function () {
+    initialize: function() {
         this.headerView = new HeaderView();
         $('.header').html(this.headerView.el);
     },
 
-	list: function(page) {
+    list: function(page) {
         var p = page ? parseInt(page, 10) : 1;
         var wineList = new WineCollection();
-        wineList.fetch({success: function(){
-            $("#content").html(new WineListView({model: wineList, page: p}).el);
-        }});
+        wineList.fetch({
+            success: function(list) {
+                $("#content").html(new WineListView({
+                    model: wineList,
+                    page: p
+                }).el);
+            }
+        });
         this.headerView.selectMenuItem('home-menu');
     },
 
-    wineDetails: function (id) {
-        var wine = new Wine({id: id});
-        wine.fetch({success: function(){
-            $("#content").html(new WineView({model: wine}).el);
-        }});
+    wineDetails: function(id) {
+        var wine = new Kinvey.Entity({}, 'wines');
+        wine.load(id, {
+            success: function(wine) {
+                $("#content").html(new WineView({
+                    model: wine
+                }).el);
+            }
+        });
         this.headerView.selectMenuItem();
     },
 
-	addWine: function() {
-        var wine = new Wine();
-        $('#content').html(new WineView({model: wine}).el);
+    addWine: function() {
+        var wine = new Wine({
+            _id: null,
+            name: "",
+            grapes: "",
+            country: "USA",
+            region: "California",
+            year: "",
+            description: "",
+            picture: null
+        });
+        $('#content').html(new WineView({
+            model: wine
+        }).el);
         this.headerView.selectMenuItem('add-menu');
-	},
+    },
 
-    about: function () {
+    about: function() {
         if (!this.aboutView) {
             this.aboutView = new AboutView();
         }
@@ -46,7 +66,13 @@ var AppRouter = Backbone.Router.extend({
 
 });
 
+Kinvey.init({
+    'appKey': 'kid_PPAM5yCJzf',
+    'appSecret': '5d55c668583d4b868545bcbc7b957ff3'
+});
+
 utils.loadTemplate(['HeaderView', 'WineView', 'WineListItemView', 'AboutView'], function() {
+
     app = new AppRouter();
     Backbone.history.start();
 });
