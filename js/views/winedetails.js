@@ -56,10 +56,10 @@ window.WineView = Backbone.View.extend({
 
     saveWine: function () {
         var self = this;
-        this.model.save(null, {
+        this.model.save({
             success: function (model) {
                 self.render();
-                app.navigate('wines/' + model.id, false);
+                app.navigate('wines/' + model.attr._id, true);
                 utils.showAlert('Success!', 'Wine saved successfully', 'alert-success');
             },
             error: function () {
