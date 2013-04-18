@@ -1,7 +1,8 @@
 var AppRouter = Backbone.Router.extend({
 
     routes: {
-        "": "list",
+        "": "home",
+        "cellar": "list",
         "wines/page/:page": "list",
         "wines/add": "addWine",
         "wines/:id": "wineDetails",
@@ -13,6 +14,13 @@ var AppRouter = Backbone.Router.extend({
         $('.header').html(this.headerView.el);
     },
 
+    home: function() {
+        if (!this.loginView) {
+            this.loginView = new LoginView();
+        }
+        $('#content').html(this.loginView.el);
+        this.headerView.selectMenuItem('about-menu');
+    },
     list: function(page) {
         var p = page ? parseInt(page, 10) : 1;
         var wineList = new WineCollection();
@@ -71,7 +79,7 @@ Kinvey.init({
     'appSecret': '5d55c668583d4b868545bcbc7b957ff3'
 });
 
-utils.loadTemplate(['HeaderView', 'WineView', 'WineListItemView', 'AboutView'], function() {
+utils.loadTemplate(['LoginView', 'HeaderView', 'WineView', 'WineListItemView', 'AboutView'], function() {
 
     app = new AppRouter();
     Backbone.history.start();
