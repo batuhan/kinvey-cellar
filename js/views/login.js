@@ -23,15 +23,17 @@ window.LoginView = Backbone.View.extend({
 	},
 	register: function(e) {
 		e.preventDefault();
-		var user = new Kinvey.User();
-		user.login($('#login-email').val(), $('#login-password').val(), {
+		Kinvey.User.create({
+			username: $('#register-username').val(),
+			password: $('#register-password').val(),
+			email: $('#register-email').val()
+		}, {
 			success: function(user) {
+				//user is cretated & logged in
 				console.log(user)
-				//IkonMenu.events.trigger('loggedin');
 			},
 			error: function(e) {
 				console.log(e)
-				//add an error handler
 			}
 		});
 	},

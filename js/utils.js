@@ -18,7 +18,7 @@ window.utils = {
         $.when.apply(null, deferreds).done(callback);
     },
 
-    uploadFile: function (file, callbackSuccess) {
+    uploadFile: function(file, callbackSuccess) {
         var self = this;
         var data = new FormData();
         data.append('file', file);
@@ -30,16 +30,16 @@ window.utils = {
             cache: false,
             contentType: false
         })
-        .done(function () {
+            .done(function() {
             console.log(file.name + " uploaded successfully");
             callbackSuccess();
         })
-        .fail(function () {
+            .fail(function() {
             self.showAlert('Error!', 'An error occurred while uploading ' + file.name, 'alert-error');
         });
     },
 
-    displayValidationErrors: function (messages) {
+    displayValidationErrors: function(messages) {
         for (var key in messages) {
             if (messages.hasOwnProperty(key)) {
                 this.addValidationError(key, messages[key]);
@@ -48,13 +48,13 @@ window.utils = {
         this.showAlert('Warning!', 'Fix validation errors and try again', 'alert-warning');
     },
 
-    addValidationError: function (field, message) {
+    addValidationError: function(field, message) {
         var controlGroup = $('#' + field).parent().parent();
         controlGroup.addClass('error');
         $('.help-inline', controlGroup).html(message);
     },
 
-    removeValidationError: function (field) {
+    removeValidationError: function(field) {
         var controlGroup = $('#' + field).parent().parent();
         controlGroup.removeClass('error');
         $('.help-inline', controlGroup).html('');
@@ -69,6 +69,10 @@ window.utils = {
 
     hideAlert: function() {
         $('.alert').hide();
+    },
+
+    currentUser: function() {
+        return Kinvey.getCurrentUser();
     }
 
 };

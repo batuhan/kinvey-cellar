@@ -6,20 +6,39 @@ var AppRouter = Backbone.Router.extend({
         "wines/page/:page": "list",
         "wines/add": "addWine",
         "wines/:id": "wineDetails",
-        "about": "about"
+        "about": "about",
+        "logout": "logout"
     },
-
     initialize: function() {
         this.headerView = new HeaderView();
         $('.header').html(this.headerView.el);
+        console.log('inits')
     },
-
-    home: function() {
-        if (!this.loginView) {
-            this.loginView = new LoginView();
+    logout: function() {
+        var user = Kinvey.getCurrentUser();
+        if (null !== user) {
+            user.logout({
+                success: function() {
+                    console.log('loggedout');
+                    AppRouter.prototype.navigate('', true);
+                },
+                error: function(e) {
+                    console.log(e);
+                }
+            });
         }
-        $('#content').html(this.loginView.el);
-        this.headerView.selectMenuItem('about-menu');
+
+    },
+    home: function() {
+        if (Kinvey.getCurrentUser() !== null) {
+            AppRouter.prototype.navigate('cellar', true);
+        } else {
+            if (!this.loginView) {
+                this.loginView = new LoginView();
+            }
+            $('#content').html(this.loginView.el);
+            this.headerView.selectMenuItem('login-menu');
+        }
     },
     list: function(page) {
         var p = page ? parseInt(page, 10) : 1;
@@ -80,7 +99,6 @@ Kinvey.init({
 });
 
 utils.loadTemplate(['LoginView', 'HeaderView', 'WineView', 'WineListItemView', 'AboutView'], function() {
-
     app = new AppRouter();
     Backbone.history.start();
 });
